@@ -1,0 +1,4 @@
+rtc_fsm.c:25:6:blinkClock	24	static
+rtc_fsm.c:138:6:rtc_fsm	8	static
+rtc_fsm.c:201:6:updateTime	8	static
+rtc_fsm.c:210:6:displayTime	24	static

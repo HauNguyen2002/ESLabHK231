@@ -1,0 +1,4 @@
+alarm_fsm.c:17:6:alarm_fsm	24	static
+alarm_fsm.c:66:6:alarmButtonHandler	16	static
+alarm_fsm.c:88:6:alarmBlinkCLKHandler	40	static
+alarm_fsm.c:106:6:alarmTimeDurationHandler	4	static

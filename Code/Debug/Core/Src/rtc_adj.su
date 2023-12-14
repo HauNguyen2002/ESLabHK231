@@ -1,0 +1,4 @@
+rtc_adj.c:18:6:rtc_manual_fsm	24	static
+rtc_adj.c:64:6:manButtonHandler	16	static
+rtc_adj.c:86:6:manBlinkCLKHandler	40	static
+rtc_adj.c:104:6:manTimeDurationHandler	4	static

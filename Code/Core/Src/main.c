@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -28,10 +29,15 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "software_timer.h"
+#include "led_7seg.h"
+#include "button.h"
 #include "lcd.h"
 #include "picture.h"
-#include "fsm_automatic.h"
-#include "fsm_manual.h"
+#include "ds3231.h"
+#include "uart.h"
+#include "rtc_auto.h"
+#include "rtc_adj.h"
+#include "alarm_fsm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +64,8 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void system_init();
+void test_LedDebug();
+void test_Uart();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -97,23 +105,20 @@ int main(void)
   MX_SPI1_Init();
   MX_FSMC_Init();
   MX_USART1_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   system_init();
+  lcd_Clear(BLACK);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  if(flag_timer2[0]==1){
-		  button_Scan();
-		  setTimer2(50);
-	  }
-	  fsm_automatic();
-	  fsm_manual();
-
     /* USER CODE END WHILE */
-
+	  rtc_auto_fsm();
+	  rtc_manual_fsm();
+	  alarm_fsm();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -165,24 +170,50 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 void system_init(){
-	timer_init();
-	button_init();
-	setTimer2(50);
-	setButCooldownTimer(1000);
-	lcd_init();
-	lcd_Fill(0, 0, 900, 900, WHITE);
+	  HAL_GPIO_WritePin(OUTPUT_Y0_GPIO_Port, OUTPUT_Y0_Pin, 0);
+	  HAL_GPIO_WritePin(OUTPUT_Y1_GPIO_Port, OUTPUT_Y1_Pin, 0);
+	  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, 0);
+	  timer_init();
+	  led7_init();
+	  button_init();
+	  lcd_init();
+	  uart_init_rs232();
+	  ds3231_init();
+	  setAutoTimer(100);
+	  setClockTimer(50);
+	  setblinkCLKnumTimer(50);
+	  setAutoIncTimer(50);
+	  setHoldButtonTimer(100);
 }
-void test_lcd(){
-//	lcd_Fill(0, 0, 240, 20, BLUE);
-//	lcd_StrCenter(0, 2, "Hello World !!!", RED, BLUE, 16, 1);
-//	lcd_ShowStr(20, 30, "Test lcd screen", WHITE, RED, 24, 0);
-//	lcd_DrawCircle(0, 120, GREEN, 40, 1);
-//	lcd_DrawCircle(0, 200, RED, 40, 1);
-//	lcd_DrawCircle(0, 280, YELLOW, 40, 1);
+
+uint16_t count_led_debug = 0;
+
+void test_LedDebug(){
+	count_led_debug = (count_led_debug + 1)%20;
+	if(count_led_debug == 0){
+		HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
+	}
 }
 
+void test_button(){
+	for(int i = 0; i < 16; i++){
+		if(button_count[i] == 1){
+			led7_SetDigit(i/10, 2, 0);
+			led7_SetDigit(i%10, 3, 0);
+		}
+	}
+}
 
-
+void test_Uart(){
+	if(button_count[12] == 1){
+		uart_Rs232SendNum(ds3231_hours);
+		uart_Rs232SendString(":");
+		uart_Rs232SendNum(ds3231_min);
+		uart_Rs232SendString(":");
+		uart_Rs232SendNum(ds3231_sec);
+		uart_Rs232SendString("\n");
+	}
+}
 /* USER CODE END 4 */
 
 /**

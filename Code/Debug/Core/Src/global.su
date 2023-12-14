@@ -1,0 +1,3 @@
+global.c:18:6:updateAlarm	8	static
+global.c:28:6:updateTime	8	static
+global.c:37:6:displayTime	24	static

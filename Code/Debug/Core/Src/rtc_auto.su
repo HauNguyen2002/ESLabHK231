@@ -1,0 +1,3 @@
+rtc_auto.c:13:6:rtc_auto_fsm	16	static
+rtc_auto.c:47:6:autoButtonHandler	8	static
+rtc_auto.c:57:5:checkAlarm	16	static
