@@ -1,0 +1,7 @@
+software_timer.c:22:6:timer_init	8	static
+software_timer.c:34:6:setTimer2	16	static
+software_timer.c:41:6:setLightAutoTimer	16	static
+software_timer.c:48:6:setLightManualTimer	16	static
+software_timer.c:55:6:setButCooldownTimer	16	static
+software_timer.c:62:6:timer2Run	16	static
+software_timer.c:74:6:HAL_TIM_PeriodElapsedCallback	16	static
